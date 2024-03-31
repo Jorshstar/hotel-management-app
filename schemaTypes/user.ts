@@ -26,15 +26,15 @@ const user = {
     }),
     defineField({
       name: 'username',
-      title: 'userName',
+      title: 'username',
       type: 'string',
       description: 'Username of the user',
       readOnly: true,
       validation: Rule => Rule.required(),
     }),
     defineField({
-      name: 'tel',
-      title: 'Phone Number',
+      name: 'phonenumber',
+      title: 'Phonenumber',
       type: 'number',
       description: 'Phone Number of the user',
       readOnly: true,
