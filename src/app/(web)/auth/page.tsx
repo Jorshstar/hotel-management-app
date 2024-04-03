@@ -51,17 +51,28 @@ const Auth = () => {
   
       try {
         const user = await signUp(formData);
-        if(user) {
-          toast.success('success. Please Sign in')
+        if (user) {
+          toast.success('Success. Please sign in.');
+          // Optionally, you can automatically sign in the user after signing up
+          await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false // Prevent automatic redirection
+          });
+          router.push('/'); // Redirect after sign-in
         }
       } catch (error) {
         console.log(error);
-        toast.error("Something Went Wrong")
-        
+        toast.error("Something went wrong");
       } finally {
         setFormData(defaultFormData);
       }
     };
+  
+    // Render sign-up form only if there's no active session
+    if (session) {
+      return <p className='text-white'>Your are already logged in.</p>;
+    }
 
   return (
     <section className="container mx-auto bg-cover bg-center bg-fixed " style={{

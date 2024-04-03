@@ -40,27 +40,41 @@ const RoomDetails = (props: { params: { slug: string } }) => {
     if (!room) return <LoadingSpinner />;
 
     const calcMinCheckoutDate = () => {
+      console.log('calcMinCheckoutDate: checkinDate=', checkinDate);
       if (checkinDate) {
+        console.log('calcMinCheckoutDate: checkinDate is not null');
         const nextDay = new Date(checkinDate);
         nextDay.setDate(nextDay.getDate() + 1);
+        console.log('calcMinCheckoutDate: nextDay=', nextDay);
         return nextDay;
       }
+      console.log('calcMinCheckoutDate: checkinDate is null');
       return null;
     };
 
+
     const handleBookNowClick = async () => {
-      if (!checkinDate || !checkoutDate)
+      console.log('handleBookNowClick: checkinDate=', checkinDate);
+      console.log('handleBookNowClick: checkoutDate=', checkoutDate);
+      if (!checkinDate || !checkoutDate) {
+        console.log('handleBookNowClick: Missing checkin / checkout date');
         return toast.error('Please provide checkin / checkout date');
-  
-      if (checkinDate > checkoutDate)
+      }
+
+      if (checkinDate > checkoutDate) {
+        console.log('handleBookNowClick: Invalid checkin period');
         return toast.error('Please choose a valid checkin period');
+      }
 
-        const numberOfDays = calcNumDays();
+      const numberOfDays = calcNumDays();
+      console.log('handleBookNowClick: numberOfDays=', numberOfDays);
 
-        const hotelRoomSlug = room.slug.current;
+      const hotelRoomSlug = room.slug.current;
+      console.log('handleBookNowClick: hotelRoomSlug=', hotelRoomSlug);
 
-        //Integrate stripe
-        const stripe = await getStripe();
+      //Integrate stripe
+      const stripe = await getStripe();
+      console.log('handleBookNowClick: stripe=', stripe);
 
     try {
       const { data: stripeSession } = await axios.post('/api/stripe', {
@@ -72,7 +86,7 @@ const RoomDetails = (props: { params: { slug: string } }) => {
         hotelRoomSlug,
       });
 
-      console.log('Stripe Session ID:', stripeSession)
+      console.log('handleBookNowClick: Stripe Session ID=', stripeSession.id);
 
       if (stripe) {
         const result = await stripe.redirectToCheckout({
@@ -80,21 +94,31 @@ const RoomDetails = (props: { params: { slug: string } }) => {
         });
 
         if (result.error) {
+          console.log('handleBookNowClick: Payment Failed', result.error);
           toast.error('Payment Failed');
         }
       }
     } catch (error) {
-      console.log('Error: ', error);
+      console.log('handleBookNowClick: Error: ', error);
       toast.error('An error occured');
     }
     }
 
+
     const calcNumDays = () => {
-      if (!checkinDate || !checkoutDate) return;
+      console.log('calcNumDays: checkinDate=', checkinDate);
+      console.log('calcNumDays: checkoutDate=', checkoutDate);
+      if (!checkinDate || !checkoutDate) {
+        console.log('calcNumDays: Missing checkin / checkout date');
+        return;
+      }
+
       const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
       const noOfDays = Math.ceil(timeDiff / (24 * 60 * 60 * 1000));
+      console.log('calcNumDays: noOfDays=', noOfDays);
       return noOfDays;
     };
+
 
   return (
     <div>

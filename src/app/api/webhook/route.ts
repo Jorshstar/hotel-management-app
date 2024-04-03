@@ -10,15 +10,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 export async function POST(req: Request, res: Response) {
   try {
+    console.log('Webhook Request received');
+
     const reqBody = await req.text();
     const sig = req.headers.get('stripe-signature');
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!sig || !webhookSecret) {
+      console.log('Webhook Error: Missing signature or webhook secret');
       return new NextResponse('Missing signature or webhook secret', { status: 400 });
     }
 
     const event: Stripe.Event = stripe.webhooks.constructEvent(reqBody, sig, webhookSecret);
+
+    console.log(`Webhook Event: ${event.type}`);
 
     switch (event.type) {
       case checkout_session_completed:
@@ -27,6 +32,7 @@ export async function POST(req: Request, res: Response) {
         const metadata = session.metadata;
 
         if (!metadata) {
+          console.log('Webhook Error: Metadata is missing');
           return new NextResponse('Metadata is missing', { status: 400 });
         }
 
@@ -67,3 +73,4 @@ export async function POST(req: Request, res: Response) {
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 500 });
   }
 }
+

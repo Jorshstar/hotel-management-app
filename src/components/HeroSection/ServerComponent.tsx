@@ -26,12 +26,13 @@ export const heading1 = (
     <style>{blinkKeyframes}</style>
     <style>{fadeInOutKeyframes}</style>
     <div className="relative overflow-hidden h-[400px] bg-gradient-to-r from-gray-900 to-gray-800 w-full px-4 md:px-0 flex flex-col justify-center items-center text-center">
-      <div className="absolute inset-0 z-0">
-        <img
+      
+    <div className="absolute inset-0 z-0">
+      <Image
           src="/images/hotelmain3.jpg"
           alt="background"
-          className="w-full h-full object-cover"
-          
+          layout="fill"
+          objectFit="cover"
         />
       </div>
       <div className="relative z-10 text-white" style={{ animation: 'blink-color 3s infinite alternate' }}>
